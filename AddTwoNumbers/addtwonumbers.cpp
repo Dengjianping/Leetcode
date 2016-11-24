@@ -16,8 +16,6 @@ Output: 7 -> 0 -> 8
 
 using namespace std;
 
-const int Digit = 10;
-
 template <class T>
 struct LinkedList
 {
@@ -25,7 +23,7 @@ struct LinkedList
     LinkedList* next;
     LinkedList(T v)
     {
-        value = v; next = NULL:
+        value = v; next = NULL;
     }
 };
 
@@ -33,22 +31,81 @@ template <class T>
 class AddTwoNumbers
 {
 public:
-    LinkedList* addTwoLinkedList(LinkedList* a, LinkedList* b)
+    LinkedList<T>* addTwoLinkedList(LinkedList<T>* a, LinkedList<T>* b)
     {
-        LinkedList* head = new LinkedList(a->value + b->value);
-        LinkedList* merged = head;
+        LinkedList<T>* head = new LinkedList<T>(a->value + b->value);
+        LinkedList<T>* merged = head;
         
-        LinkedList* x = a->next, y = b->next;
+        LinkedList<T>* x = a->next; LinkedList<T>* y = b->next;
         while( x != NULL && y != NULL)
         {
-            LinkedList* list = new LinkedList((T)0);
-            list->value = x->value + y->value;
-            if (list->value >= 10)
-            {
-                list->value = list->value - digit;
-            }
+            LinkedList<T>* list = new LinkedList<T>(x->value + y->value);
+            //cout << merged->value << endl;
             merged->next = list;
+            merged = list;
+            x = x->next; y = y->next;
         }
+        
+        x = head;
+        while (x != NULL)
+        {
+            if (x->value >= (T)10)
+            {
+                T t = x->value / (T)10;
+                x->value = x->value % (T)10;
+                x->next->value = x->next->value + t;
+            }
+            x = x->next;
+        }
+        
         return head;
     }
+};
+
+template <class T>
+T randNumber(T range)
+{
+    return rand() % range;
+}
+
+template <class T>
+void visitLinkedList(LinkedList<T>* x)
+{
+    if (x == NULL)return;
+    cout << x->value << endl;
+    visitLinkedList(x->next);
+}
+
+template <class T>
+LinkedList<T>* createLinkedList(int count, T range)
+{
+    LinkedList<T>* head = new LinkedList<T>(randNumber(range));
+    LinkedList<T>* x = head;
+    for (size_t i = 0; i < count; i++)
+    {
+        LinkedList<T>* t = new LinkedList<T>(randNumber(range));
+        x->next = t;
+        x = t;
+    }
+    return head;
+}
+
+int main()
+{
+    const int N = 4;
+    int range = 10;
+    LinkedList<int>* head1 = createLinkedList(N, range);
+    cout << "Linked list 1: " << endl;
+    visitLinkedList(head1);
+    
+    LinkedList<int>* head2 = createLinkedList(N, range);
+    cout << "Linked list 2: " << endl;
+    visitLinkedList(head2);
+    
+    AddTwoNumbers<int> add;
+    LinkedList<int>* result = add.addTwoLinkedList(head1, head2);
+    cout << endl << "result: " << endl;
+    visitLinkedList(result);
+    
+    return 0;
 }
